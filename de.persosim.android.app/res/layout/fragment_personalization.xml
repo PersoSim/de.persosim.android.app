@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_personalization_layout_top_id"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical" >
+    
+    <TextView
+        android:id="@+id/dialog_personalization_textview_heading_id"
+        android:text="@string/dialog_personalization_heading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    
+    
+    
+    <TextView
+        android:id="@+id/dialog_personalization_textview_predefined_id"
+        android:text="@string/dialog_personalization_label_predefined"
+        android:layout_marginTop = "10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    
+    <Spinner
+        android:id="@+id/dialog_personalization_spinner_predefined_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    
+    
+    
+    <TextView
+        android:id="@+id/dialog_personalization_textview_custom_id"
+        android:text="@string/dialog_personalization_label_custom"
+        android:layout_marginTop = "25dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+      
+    <EditText
+        android:id="@+id/dialog_personalization_edittext_custom_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:inputType="text"
+        android:imeOptions="actionDone" />
+    
+    <Button
+        android:id="@+id/dialog_personalization_button_custom_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onButtonAboutDialogClick"
+        android:text="@string/dialog_personalization_button_browse" />
+    
+    
+    
+    <LinearLayout
+    android:id="@+id/dialog_personalization_layout_bottom_id"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginTop = "25dp"
+    android:orientation="horizontal" >
+    
+    <Button
+        android:id="@+id/dialog_personalization_button_ok_id"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:onClick="onButtonAboutDialogClick"
+        android:layout_weight="1"
+        style="?android:attr/borderlessButtonStyle"
+        android:text="@string/dialog_personalization_button_ok" />
+    
+    <Button
+        android:id="@+id/dialog_personalization_button_cancel_id"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:onClick="onButtonAboutDialogClick"
+        android:layout_weight="1"
+        style="?android:attr/borderlessButtonStyle"
+        android:text="@string/dialog_personalization_button_cancel" />
+    
+    </LinearLayout>
+    
+</LinearLayout>
