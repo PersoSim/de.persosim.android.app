@@ -43,7 +43,7 @@ public class MainActivity extends FragmentActivity implements Constants, SelectD
 	private TextView textOut;
 	private EditText textIn;
 	
-	private static final int lineLimit = 500;
+	private static final int lineLimit = 1000;
 	
 	// object available when CardService.onCreate() has finished
     private OsgiService osgiServiceObject;
