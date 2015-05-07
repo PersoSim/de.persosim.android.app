@@ -1,5 +1,6 @@
 package de.persosim.android.logging.consolelogger;
 
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -41,6 +42,10 @@ public class Activator implements BundleActivator {
 		bundleContext = context;
 		
 		consoleLogger = new ConsoleLogger(bundleContext);
+		
+		//register service in service registry
+		Hashtable<String, String> props = new Hashtable<String, String>();
+		bundleContext.registerService(ConsoleLogger.class, consoleLogger, props);
 		
 		serviceListener = new ServiceListener() {
 			@Override
