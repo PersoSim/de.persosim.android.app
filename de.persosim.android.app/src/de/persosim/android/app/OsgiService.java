@@ -69,7 +69,7 @@ public class OsgiService extends Service {
 				
 				launchFelix();
 
-				listKnownBundles();
+				checkBundles();
 				
 				Log.d(LOG_TAG, "END run()");
 			}
@@ -202,7 +202,7 @@ public class OsgiService extends Service {
 	/**
 	 * This method prints a list of all bundles and their parameters known to Felix.
 	 */
-	private void listKnownBundles() {
+	private void checkBundles() {
 		Log.d(LOG_TAG, "START listKnownBundles()");
 		
 		boolean allBundlesActive = true;
@@ -255,13 +255,17 @@ public class OsgiService extends Service {
         	Log.e(LOG_TAG, "could not create framework: " + ex.getMessage());
         }
 		
+		/*
+		 * Send information via broadcast especially if not all bundles have been loaded.
+		 * If e.g. loading of logging bundle fails this may otherwise go unnoticed. 
+		 */
 		Intent intent = new Intent(OSGISERVICE_STATUS);
 		if(allBundlesActive) {
 			intent.putExtra(OSGISERVICE_STATUS_MESSAGE, "All OSGI services ACTIVE!");
 		} else {
-			intent.putExtra(OSGISERVICE_STATUS_MESSAGE, "Not all OSGI services ACTIVE!");
+			intent.putExtra(OSGISERVICE_STATUS_MESSAGE, "Not all OSGI services ACTIVE!\nFunctionality of respective bundles, e.g. log output, may not be available");
 		}
-        
+		
         sendBroadcast(intent);
 		
 		Log.d(LOG_TAG, "END listKnownBundles()");

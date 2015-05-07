@@ -40,9 +40,6 @@ public class MainActivity extends FragmentActivity implements Constants, SelectD
 	
 	public static final String LOG_TAG = MainActivity.class.getName();
 	
-	public static final String KEY_IS_APDU_CATCH_ALL_ACTIVE = "de.persosim.android.isApduCatchAllActive";
-    public static final String KEY_MAGIC_AID = "de.persosim.android.magicAid";
-	
 	private TextView textOut;
 	private EditText textIn;
 	
@@ -65,8 +62,8 @@ public class MainActivity extends FragmentActivity implements Constants, SelectD
 					
 					status = bundle.getString(OsgiService.OSGISERVICE_STATUS_MESSAGE);
 					
-					Log.d(LOG_TAG, "MainActivity received card service status: " + status);
-					textOut.append("\nOSGI service announces:\n" + status);
+					Log.d(LOG_TAG, status);
+					textOut.append("\n" + status);
 				}
 			} else{
 				
