@@ -5,7 +5,9 @@ import java.io.File;
 import de.persosim.android.app.R;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -41,6 +44,7 @@ public class DialogSelect extends DialogFragment implements OnEditorActionListen
     }
 	
 	private EditText mEditText;
+	private Spinner spinner;
 	
 	public DialogSelect() {
 		Log.d(LOG_TAG, "DialogSelect() here");
@@ -56,7 +60,7 @@ public class DialogSelect extends DialogFragment implements OnEditorActionListen
         View view = inflater.inflate(R.layout.fragment_personalization, container);
         getDialog().setTitle("Settings");
     	
-    	final Spinner spinner = (Spinner) view.findViewById(R.id.dialog_personalization_spinner_predefined_id);
+      spinner = (Spinner) view.findViewById(R.id.dialog_personalization_spinner_predefined_id);
 		Log.d(LOG_TAG, "spinner is: " + spinner);
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(activityContext, R.array.std_personalizations, android.R.layout.simple_spinner_item);
 		Log.d(LOG_TAG, "adapter is: " + adapter);
@@ -68,7 +72,17 @@ public class DialogSelect extends DialogFragment implements OnEditorActionListen
         buttonBrowse = (Button) view.findViewById(R.id.dialog_personalization_button_custom_id);
         buttonBrowse.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                getDialog().dismiss();
+               
+				Log.d(LOG_TAG, "START showFileSelectDialog()");
+
+				File file = new File(Environment.getExternalStorageDirectory(),
+						"myFolder");
+				Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+				intent.setDataAndType(Uri.fromFile(file), "text/xml");
+				
+				startActivityForResult(intent,1);
+
+				Log.d(LOG_TAG, "END showFileSelectDialog()");
             }
         });
         
@@ -106,6 +120,23 @@ public class DialogSelect extends DialogFragment implements OnEditorActionListen
             }
         });
         
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			
+			@Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1,
+                    int arg2, long arg3) {
+				 if (spinner.getSelectedItemPosition() != 0) {
+	                 mEditText.setText("");
+	                
+				 }
+            }
+			
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+               // nothing to do
+            }
+        });
+        
         buttonCancel = (Button) view.findViewById(R.id.dialog_personalization_button_cancel_id);
         buttonCancel.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
@@ -127,5 +158,21 @@ public class DialogSelect extends DialogFragment implements OnEditorActionListen
         }
         return false;
     }
+    
+public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        
+    if(data != null)
+    {
+	String temp = data.getData().getPath();
+    	temp = temp.substring(temp.lastIndexOf(":") +1);
+    	//TODO edit the path, so its possible to have more then 1 sdcard
+    	String Fpath = "/storage/sdcard0/" + temp;
+        mEditText.setText(Fpath);
+       super.onActivityResult(requestCode, resultCode, data);
+    }
+       spinner.setSelection(0);
+    
+
+   }
 	
 }
