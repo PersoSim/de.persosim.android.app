@@ -37,7 +37,10 @@
     
     </LinearLayout>
 
-
+    <Spinner
+        android:id="@+id/planets_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
     
     <LinearLayout
     android:id="@+id/fragment_ll3"
