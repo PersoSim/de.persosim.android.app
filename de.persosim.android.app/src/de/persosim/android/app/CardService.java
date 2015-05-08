@@ -29,19 +29,8 @@ public class CardService extends HostApduService implements Iso7816, Constants {
 	
     private static final String LOG_TAG = CardService.class.getName();
     
-    public static final String RESULT = "result";
-    
-    public static final String CARDSERVICE_RESULT = LOG_TAG;
     public static final String CARDSERVICE_COMMAND = LOG_TAG + ".command";
     public static final String CARDSERVICE_PERSONALIZATION = LOG_TAG + ".personalization";
-    
-    public static final String DIRECTION = "direction";
-    
-    public static final byte DIRECTION_INCOMING = +1;
-    public static final byte DIRECTION_OUTGOING = -1;
-    
-    public static final String CAPDU_RECEIVED = PACKAGE_NAME + ".CApduReceived";
-    public static final String RAPDU_SENT = PACKAGE_NAME + ".RApduSent";
     
     public static final String CARDSERVICE_COMMAND_STRING = CARDSERVICE_COMMAND + ".string";
     public static final String CARDSERVICE_PERSONALIZATION_PATH = CARDSERVICE_PERSONALIZATION + ".path";

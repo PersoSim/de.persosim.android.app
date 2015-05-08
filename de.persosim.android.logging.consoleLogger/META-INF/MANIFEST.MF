@@ -8,3 +8,5 @@ Bundle-ActivationPolicy: lazy
 Import-Package: org.osgi.framework,
  org.osgi.service.log,
  org.osgi.util.tracker
+Require-Bundle: org.globaltester.logging
+Export-Package: de.persosim.android.logging

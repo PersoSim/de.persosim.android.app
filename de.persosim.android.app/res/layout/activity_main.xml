@@ -17,7 +17,7 @@
             android:scrollHorizontally="false"
             android:scrollbars="vertical"
             android:freezesText="true"
-            android:maxLines = "100"
+            android:maxLines = "1000"
             android:minLines= "1"
             android:text="@string/main_out_text" />
     </ScrollView>
