@@ -65,6 +65,8 @@ public class DialogConfig extends DialogFragment {
         buttonCancel = (Button) view.findViewById(R.id.buttonConfigCancel);
         buttonCancel.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
+            	int logLevel = spinner.getLastVisiblePosition() + 1;
+            	
                 getDialog().dismiss();
             }
         });
