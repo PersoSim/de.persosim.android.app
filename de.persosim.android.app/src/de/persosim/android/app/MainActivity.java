@@ -305,9 +305,9 @@ public class MainActivity extends FragmentActivity implements Constants, SelectD
 		case R.id.menu_item_personalization_id:
 			showSelectDialog();
 			break;
-//		case R.id.menu_item_config_id:
-//			showConfigDialog();
-//			break;
+		case R.id.menu_item_config_id:
+			showConfigDialog();
+			break;
 		case R.id.menu_item_about_id:
 			showAboutDialog();
 			break;
@@ -340,15 +340,15 @@ public class MainActivity extends FragmentActivity implements Constants, SelectD
         Log.d(LOG_TAG, "END showSelectDialog()");
     }
 	
-//	private void showConfigDialog() {
-//		Log.d(LOG_TAG, "START showConfigDialog()");
-//		
-//		FragmentManager fm = getSupportFragmentManager();
-//        DialogConfig configDialog = new DialogConfig();
-//        configDialog.show(fm, "fragment_config");
-//        
-//        Log.d(LOG_TAG, "END showConfigDialog()");
-//    }
+	private void showConfigDialog() {
+		Log.d(LOG_TAG, "START showConfigDialog()");
+		
+		FragmentManager fm = getSupportFragmentManager();
+        DialogConfig configDialog = new DialogConfig(this);
+        configDialog.show(fm, "fragment_config");
+        
+        Log.d(LOG_TAG, "END showConfigDialog()");
+    }
 
 	@Override
     public void onFinishEditDialog(String inputText) {

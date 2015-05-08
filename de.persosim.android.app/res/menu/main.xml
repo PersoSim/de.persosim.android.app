@@ -28,14 +28,12 @@
         android:orderInCategory="100"
         android:showAsAction="ifRoom"
         android:title="@string/menu_item_personalization_text"/>
-<!--    
-		<item
+	<item
         android:id="@+id/menu_item_config_id"
         android:icon="@drawable/menu_item_config_icon"
         android:orderInCategory="100"
         android:showAsAction="ifRoom"
         android:title="@string/menu_item_config_text"/>
--->
     <item
         android:id="@+id/menu_item_about_id"
         android:icon="@drawable/menu_item_about_icon"
