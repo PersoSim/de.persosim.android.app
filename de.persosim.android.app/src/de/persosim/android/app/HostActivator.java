@@ -113,6 +113,7 @@ public class HostActivator implements BundleActivator {
 		String fileNameCryptProv     = "org.globaltester.cryptoprovider.jar";
 		String fileNameSc            = "org.globaltester.cryptoprovider.sc.jar";
 		String fileNameAndroidLogger = "de.persosim.android.logging.consolelogger.jar";
+		String fileNameLogging       = "org.globaltester.logging.jar";
 		
 		Log.d(LOG_TAG, "dumping bundles to: " + pathBundles);
 		Utils.writeRawResourceToFile(osgiService, R.raw.felixlog, pathBundles, fileNameFelixLog);
@@ -122,6 +123,7 @@ public class HostActivator implements BundleActivator {
 		
 		Utils.writeRawResourceToFile(osgiService, R.raw.simulator, pathBundles, fileNameSimulator);
 		Utils.writeRawResourceToFile(osgiService, R.raw.androidlogger, pathBundles, fileNameAndroidLogger);
+		Utils.writeRawResourceToFile(osgiService, R.raw.logging, pathBundles, fileNameLogging);
 		
 		String p01 = "Profile01.xml";
 		String p02 = "Profile02.xml";
