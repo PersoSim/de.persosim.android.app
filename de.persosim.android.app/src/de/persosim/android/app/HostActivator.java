@@ -22,9 +22,29 @@ public class HostActivator implements BundleActivator {
 	public static final String LOG_TAG = HostActivator.class.getName();
 	
 	private BundleContext bundleContext = null;
-	private List<org.osgi.framework.Bundle> bundlesInstalled;
+	private List<org.osgi.framework.Bundle> bundlesInstalled = new ArrayList<>();
 	private ServiceRegistration<?> serviceRegistrationBundle;
 	private OsgiService osgiService;
+	
+	public String fileNameFelixLog      = "org.apache.felix.log-1.0.1.jar";
+	public String fileNameSimulator     = "de.persosim.simulator_0.5.0.SNAPSHOT.jar";
+	public String fileNameCryptProv     = "org.globaltester.cryptoprovider.jar";
+	public String fileNameSc            = "org.globaltester.cryptoprovider.sc.jar";
+	public String fileNameAndroidLogger = "de.persosim.android.logging.consolelogger.jar";
+	public String fileNameLogging       = "org.globaltester.logging.jar";
+	
+	public String fileNameProfile01 = "Profile01.xml";
+	public String fielNameProfile02 = "Profile02.xml";
+	public String fileNameProfile03 = "Profile03.xml";
+	public String fileNameProfile04 = "Profile04.xml";
+	public String fileNameProfile05 = "Profile05.xml";
+	public String fileNameProfile06 = "Profile06.xml";
+	public String fileNameProfile07 = "Profile07.xml";
+	public String fileNameProfile08 = "Profile08.xml";
+	public String fileNameProfile09 = "Profile09.xml";
+	public String fileNameProfile10 = "Profile10.xml";
+	
+	public String[] startOrder = {fileNameLogging, fileNameCryptProv, fileNameSc, fileNameFelixLog, fileNameSimulator};
 	
 	
 	
@@ -61,7 +81,7 @@ public class HostActivator implements BundleActivator {
 	private void installBundlesFromDisk() {
 		Log.d(LOG_TAG, "START installBundlesFromDisk()");
         
-        bundlesInstalled = new ArrayList<>();
+        
         
         String bundlePath, bundleName;
         List<String> bundleList = Utils.listFileNamesForFolder(Constants.DIR_BUNDLE_NAME, ".jar", true);
@@ -108,13 +128,6 @@ public class HostActivator implements BundleActivator {
 		file = new File(pathPerso);
 		Utils.preparePath(file);
 		
-		String fileNameFelixLog      = "org.apache.felix.log-1.0.1.jar";
-		String fileNameSimulator     = "de.persosim.simulator_0.5.0.SNAPSHOT.jar";
-		String fileNameCryptProv     = "org.globaltester.cryptoprovider.jar";
-		String fileNameSc            = "org.globaltester.cryptoprovider.sc.jar";
-		String fileNameAndroidLogger = "de.persosim.android.logging.consolelogger.jar";
-		String fileNameLogging       = "org.globaltester.logging.jar";
-		
 		Log.d(LOG_TAG, "dumping bundles to: " + pathBundles);
 		Utils.writeRawResourceToFile(osgiService, R.raw.felixlog, pathBundles, fileNameFelixLog);
 		
@@ -125,28 +138,17 @@ public class HostActivator implements BundleActivator {
 		Utils.writeRawResourceToFile(osgiService, R.raw.androidlogger, pathBundles, fileNameAndroidLogger);
 		Utils.writeRawResourceToFile(osgiService, R.raw.logging, pathBundles, fileNameLogging);
 		
-		String p01 = "Profile01.xml";
-		String p02 = "Profile02.xml";
-		String p03 = "Profile03.xml";
-		String p04 = "Profile04.xml";
-		String p05 = "Profile05.xml";
-		String p06 = "Profile06.xml";
-		String p07 = "Profile07.xml";
-		String p08 = "Profile08.xml";
-		String p09 = "Profile09.xml";
-		String p10 = "Profile10.xml";
-		
 		Log.d(LOG_TAG, "dumping personalizations to: " + pathPerso);
-		Utils.writeRawResourceToFile(osgiService, R.raw.profile01, pathPerso, p01);
-		Utils.writeRawResourceToFile(osgiService, R.raw.profile02, pathPerso, p02);
-		Utils.writeRawResourceToFile(osgiService, R.raw.profile03, pathPerso, p03);
-		Utils.writeRawResourceToFile(osgiService, R.raw.profile04, pathPerso, p04);
-		Utils.writeRawResourceToFile(osgiService, R.raw.profile05, pathPerso, p05);
-		Utils.writeRawResourceToFile(osgiService, R.raw.profile06, pathPerso, p06);
-		Utils.writeRawResourceToFile(osgiService, R.raw.profile07, pathPerso, p07);
-		Utils.writeRawResourceToFile(osgiService, R.raw.profile08, pathPerso, p08);
-		Utils.writeRawResourceToFile(osgiService, R.raw.profile09, pathPerso, p09);
-		Utils.writeRawResourceToFile(osgiService, R.raw.profile10, pathPerso, p10);
+		Utils.writeRawResourceToFile(osgiService, R.raw.profile01, pathPerso, fileNameProfile01);
+		Utils.writeRawResourceToFile(osgiService, R.raw.profile02, pathPerso, fielNameProfile02);
+		Utils.writeRawResourceToFile(osgiService, R.raw.profile03, pathPerso, fileNameProfile03);
+		Utils.writeRawResourceToFile(osgiService, R.raw.profile04, pathPerso, fileNameProfile04);
+		Utils.writeRawResourceToFile(osgiService, R.raw.profile05, pathPerso, fileNameProfile05);
+		Utils.writeRawResourceToFile(osgiService, R.raw.profile06, pathPerso, fileNameProfile06);
+		Utils.writeRawResourceToFile(osgiService, R.raw.profile07, pathPerso, fileNameProfile07);
+		Utils.writeRawResourceToFile(osgiService, R.raw.profile08, pathPerso, fileNameProfile08);
+		Utils.writeRawResourceToFile(osgiService, R.raw.profile09, pathPerso, fileNameProfile09);
+		Utils.writeRawResourceToFile(osgiService, R.raw.profile10, pathPerso, fileNameProfile10);
 		
 		String pgt = "ProfileGT.xml";
 		Utils.writeRawResourceToFile(osgiService, R.raw.profilegt, pathPerso, pgt);
