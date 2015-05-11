@@ -22,7 +22,7 @@ public class HostActivator implements BundleActivator {
 	public static final String LOG_TAG = HostActivator.class.getName();
 	
 	private BundleContext bundleContext = null;
-	private List<org.osgi.framework.Bundle> bundlesInstalled = new ArrayList<>();
+	
 	private ServiceRegistration<?> serviceRegistrationBundle;
 	private OsgiService osgiService;
 	
@@ -44,7 +44,11 @@ public class HostActivator implements BundleActivator {
 	public String fileNameProfile09 = "Profile09.xml";
 	public String fileNameProfile10 = "Profile10.xml";
 	
-	public String[] startOrder = {fileNameLogging, fileNameCryptProv, fileNameSc, fileNameFelixLog, fileNameSimulator};
+	public String[] startOrder = {fileNameLogging, fileNameCryptProv, fileNameSc, fileNameSimulator};
+	
+	List<org.osgi.framework.Bundle> installedBundlesUnordered;
+	List<org.osgi.framework.Bundle> installedBundlesOrdered;
+	List<org.osgi.framework.Bundle> installedBundlesNoStart;
 	
 	
 	
@@ -59,8 +63,24 @@ public class HostActivator implements BundleActivator {
 		bundleContext = context;
 		
 		dumpBundlesFromApk();
-		installBundlesFromDisk();
-		startBundles();
+		
+		Log.d(LOG_TAG, "install unordered bundles");
+		List<String> bundleList = Utils.listFileNamesForFolder(Constants.DIR_BUNDLE_UNORDERED_START_NAME, ".jar", true);
+		installedBundlesUnordered = installBundlesFromDisk(bundleList);
+		
+		Log.d(LOG_TAG, "install ordered bundles");
+		bundleList = new ArrayList<>();
+		for(String bundle : startOrder) {
+			bundleList.add(Constants.DIR_BUNDLE_ORDERED_START_NAME + "/" + bundle);
+		}
+		installedBundlesOrdered = installBundlesFromDisk(bundleList);
+		
+		
+		Log.d(LOG_TAG, "start ordered bundles");
+		startBundles(installedBundlesOrdered);
+		Log.d(LOG_TAG, "start unordered bundles");
+		startBundles(installedBundlesUnordered);
+		
 		registerServices();
 		
 		Log.d(LOG_TAG, "END start(BundleContext)");
@@ -76,19 +96,18 @@ public class HostActivator implements BundleActivator {
 	}
 	
 	/**
-	 * This method installs all bundles found within the app's bundle directory or any of its sub-directories.
+	 * This method installs all bundles contained in the provided list.
+	 * @param bundleList the list of bundle files to be installed
 	 */
-	private void installBundlesFromDisk() {
-		Log.d(LOG_TAG, "START installBundlesFromDisk()");
+	private List<org.osgi.framework.Bundle> installBundlesFromDisk(List<String> bundleList) {
+		Log.d(LOG_TAG, "START installBundlesFromDisk(List<String>)");
         
+		List<org.osgi.framework.Bundle> bundlesInstalled = new ArrayList<>();
         
-        
-        String bundlePath, bundleName;
-        List<String> bundleList = Utils.listFileNamesForFolder(Constants.DIR_BUNDLE_NAME, ".jar", true);
+        String bundlePath;
         
         try {
-        	for(String bundleElem : bundleList) {
-        		bundleName = bundleElem;
+        	for(String bundleName : bundleList) {
         		bundlePath = "file:" + bundleName;
         		
         		Log.d(LOG_TAG, "about to install bundle at path: " + bundlePath);
@@ -110,7 +129,9 @@ public class HostActivator implements BundleActivator {
 			Log.w(LOG_TAG, "encountered general Exception when installing bundle: " + e.getMessage());
 		}
         
-        Log.d(LOG_TAG, "END installBundlesFromDisk()");
+        Log.d(LOG_TAG, "END installBundlesFromDisk(List<String>)");
+        
+        return bundlesInstalled;
 	}
 	
 	/**
@@ -119,24 +140,24 @@ public class HostActivator implements BundleActivator {
 	private void dumpBundlesFromApk() {
 		Log.d(LOG_TAG, "START dumpBundlesFromApk");
 		
-		String pathBundles = Constants.DIR_BUNDLE_NAME;
+//		String pathBundles = Constants.DIR_BUNDLE_NAME;
 		String pathPerso = Constants.DIR_PERSO_NAME;
 		
-		File file = new File(pathBundles);
+//		File file = new File(pathBundles);
+//		Utils.preparePath(file);
+		
+		File file = new File(pathPerso);
 		Utils.preparePath(file);
 		
-		file = new File(pathPerso);
-		Utils.preparePath(file);
+		Log.d(LOG_TAG, "dumping bundles to disk");
+		Utils.writeRawResourceToFile(osgiService, R.raw.felixlog,         Constants.DIR_BUNDLE_UNORDERED_START_NAME, fileNameFelixLog);
 		
-		Log.d(LOG_TAG, "dumping bundles to: " + pathBundles);
-		Utils.writeRawResourceToFile(osgiService, R.raw.felixlog, pathBundles, fileNameFelixLog);
+		Utils.writeRawResourceToFile(osgiService, R.raw.cryptoprovider,   Constants.DIR_BUNDLE_ORDERED_START_NAME, fileNameCryptProv);
+		Utils.writeRawResourceToFile(osgiService, R.raw.cryptoprovidersc, Constants.DIR_BUNDLE_ORDERED_START_NAME, fileNameSc);
 		
-		Utils.writeRawResourceToFile(osgiService, R.raw.cryptoprovider, pathBundles, fileNameCryptProv);
-		Utils.writeRawResourceToFile(osgiService, R.raw.cryptoprovidersc, pathBundles, fileNameSc);
-		
-		Utils.writeRawResourceToFile(osgiService, R.raw.simulator, pathBundles, fileNameSimulator);
-		Utils.writeRawResourceToFile(osgiService, R.raw.androidlogger, pathBundles, fileNameAndroidLogger);
-		Utils.writeRawResourceToFile(osgiService, R.raw.logging, pathBundles, fileNameLogging);
+		Utils.writeRawResourceToFile(osgiService, R.raw.simulator,        Constants.DIR_BUNDLE_ORDERED_START_NAME, fileNameSimulator);
+		Utils.writeRawResourceToFile(osgiService, R.raw.androidlogger,    Constants.DIR_BUNDLE_ORDERED_START_NAME, fileNameAndroidLogger);
+		Utils.writeRawResourceToFile(osgiService, R.raw.logging,          Constants.DIR_BUNDLE_ORDERED_START_NAME, fileNameLogging);
 		
 		Log.d(LOG_TAG, "dumping personalizations to: " + pathPerso);
 		Utils.writeRawResourceToFile(osgiService, R.raw.profile01, pathPerso, fileNameProfile01);
@@ -159,7 +180,7 @@ public class HostActivator implements BundleActivator {
 	/**
 	 * This method starts all bundles that have been previously installed.
 	 */
-	public void startBundles() {
+	public void startBundles(List<org.osgi.framework.Bundle> bundlesInstalled) {
 		Log.d(LOG_TAG, "START startBundles");
 
 		for (org.osgi.framework.Bundle bundle : bundlesInstalled) {
