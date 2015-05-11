@@ -10,12 +10,15 @@ public interface Constants {
 	
 	public static final String lineSeparator = System.getProperty("line.separator");
 	
-	public static final File   DIR_DOWNLOAD      = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+	public static final File   DIR_DOWNLOAD                    = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 	
-	public static final String DIR_DOWNLOAD_NAME = DIR_DOWNLOAD.toString();
-	public static final String DIR_FELIX_NAME    = DIR_DOWNLOAD   + "/felixbase";
-	public static final String DIR_BUNDLE_NAME   = DIR_FELIX_NAME + "/bundles";
-	public static final String DIR_PERSO_NAME    = DIR_FELIX_NAME + "/personalization";
+	public static final String DIR_DOWNLOAD_NAME               = DIR_DOWNLOAD.toString();
+	public static final String DIR_FELIX_NAME                  = DIR_DOWNLOAD    + "/felixbase";
+	public static final String DIR_BUNDLE_NAME                 = DIR_FELIX_NAME  + "/bundles";
+	public static final String DIR_BUNDLE_ORDERED_START_NAME   = DIR_BUNDLE_NAME + "/ordered";
+	public static final String DIR_BUNDLE_UNORDERED_START_NAME = DIR_BUNDLE_NAME + "/unordered";
+	public static final String DIR_BUNDLE_NO_START_NAME        = DIR_BUNDLE_NAME + "/nostart";
+	public static final String DIR_PERSO_NAME                  = DIR_FELIX_NAME  + "/personalization";
 	
 	public static final String BOOT_DELEGATION_PACKAGES = (
 			"org.osgi.*," +
