@@ -44,10 +44,11 @@ public class HostActivator implements BundleActivator {
 	public String fileNameProfile09 = "Profile09.xml";
 	public String fileNameProfile10 = "Profile10.xml";
 	
-	public String[] startOrder = {fileNameLogging, fileNameCryptProv, fileNameSc, fileNameSimulator};
+	public String[] startOrder = {fileNameLogging, fileNameAndroidLogger, fileNameCryptProv, fileNameSc, fileNameSimulator};
 	
 	List<org.osgi.framework.Bundle> installedBundlesUnordered;
-	List<org.osgi.framework.Bundle> installedBundlesOrdered;
+	List<org.osgi.framework.Bundle> installedBundlesOrderedNonStart;
+	List<org.osgi.framework.Bundle> installedBundlesOrderedStart;
 	List<org.osgi.framework.Bundle> installedBundlesNoStart;
 	
 	
@@ -62,22 +63,30 @@ public class HostActivator implements BundleActivator {
 		
 		bundleContext = context;
 		
+		Log.d(LOG_TAG, "START check dumping");
 		dumpBundlesFromApk();
+		Log.d(LOG_TAG, "END check dumping");
+		
+		List<String> bundleListOrderedNonStart = Utils.listFileNamesForFolder(Constants.DIR_BUNDLE_ORDERED_START_NAME, ".jar", true);
+		
+		List<String> bundleListOrderedStart = new ArrayList<>();
+		String bundleFileName;
+		for(String bundle : startOrder) {
+			bundleFileName = Constants.DIR_BUNDLE_ORDERED_START_NAME + "/" + bundle;
+			bundleListOrderedStart.add(bundleFileName);
+		}
+		
+		Log.d(LOG_TAG, "install ordered bundles start");
+		installedBundlesOrderedStart    = installBundlesFromDisk(bundleListOrderedStart);
+		Log.d(LOG_TAG, "install ordered bundles non start");
+		installedBundlesOrderedNonStart = installBundlesFromDisk(bundleListOrderedNonStart);
 		
 		Log.d(LOG_TAG, "install unordered bundles");
-		List<String> bundleList = Utils.listFileNamesForFolder(Constants.DIR_BUNDLE_UNORDERED_START_NAME, ".jar", true);
+		List<String>  bundleList = Utils.listFileNamesForFolder(Constants.DIR_BUNDLE_UNORDERED_START_NAME, ".jar", true);
 		installedBundlesUnordered = installBundlesFromDisk(bundleList);
 		
-		Log.d(LOG_TAG, "install ordered bundles");
-		bundleList = new ArrayList<>();
-		for(String bundle : startOrder) {
-			bundleList.add(Constants.DIR_BUNDLE_ORDERED_START_NAME + "/" + bundle);
-		}
-		installedBundlesOrdered = installBundlesFromDisk(bundleList);
-		
-		
 		Log.d(LOG_TAG, "start ordered bundles");
-		startBundles(installedBundlesOrdered);
+		startBundles(installedBundlesOrderedStart);
 		Log.d(LOG_TAG, "start unordered bundles");
 		startBundles(installedBundlesUnordered);
 		
@@ -138,7 +147,7 @@ public class HostActivator implements BundleActivator {
 	 * This method exports bundles stored within the raw resources to the app's bundle directory.
 	 */
 	private void dumpBundlesFromApk() {
-		Log.d(LOG_TAG, "START dumpBundlesFromApk");
+		Log.d(LOG_TAG, "START dumpBundlesFromApk()");
 		
 //		String pathBundles = Constants.DIR_BUNDLE_NAME;
 		String pathPerso = Constants.DIR_PERSO_NAME;
@@ -174,7 +183,7 @@ public class HostActivator implements BundleActivator {
 		String pgt = "ProfileGT.xml";
 		Utils.writeRawResourceToFile(osgiService, R.raw.profilegt, pathPerso, pgt);
 
-		Log.d(LOG_TAG, "END dumpBundlesFromApk");
+		Log.d(LOG_TAG, "END dumpBundlesFromApk()");
 	}
 	
 	/**

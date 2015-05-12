@@ -3,6 +3,7 @@ package de.persosim.android.app;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -11,11 +12,14 @@ import org.apache.felix.framework.Felix;
 import org.apache.felix.framework.util.FelixConstants;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -24,8 +28,12 @@ import android.util.Log;
 public class OsgiService extends Service {
 	
 	public static final String LOG_TAG = OsgiService.class.getName();
+	public static final String OSGISERVICE = LOG_TAG;
 	public static final String OSGISERVICE_STATUS = LOG_TAG + ".status";
 	public static final String OSGISERVICE_STATUS_MESSAGE = OSGISERVICE_STATUS + ".message";
+	public static final String OSGISERVICE_START = LOG_TAG + ".start";
+	public static final String OSGISERVICE_BUNDLE_NAME = LOG_TAG + ".bundlename";
+	public static final String OSGISERVICE_BUNDLE_FILE = LOG_TAG + ".bundlefile";
 	
 	private String defaultAppDir = null;
 	private String defaultFelixDir = null;
@@ -38,6 +46,8 @@ public class OsgiService extends Service {
 	private final IBinder osgiBinder = new OsgiBinder();
 	
 	private LinkedList<String> log;
+	
+	private HashMap<String, ServiceTracker<?, ?>> serviceTrackerMap = new HashMap<>();
 	
 	
 	
@@ -66,6 +76,8 @@ public class OsgiService extends Service {
 		Runnable r = new Runnable() {
 			public void run() {
 				Log.d(LOG_TAG, "START run()");
+				
+				Log.d(LOG_TAG, "VAR: " + OSGISERVICE_START);
 				
 				launchFelix();
 
@@ -273,9 +285,63 @@ public class OsgiService extends Service {
 	
 	@Override
 	  public int onStartCommand(Intent intent, int flags, int startId) {
-		int result = super.onStartCommand(intent, flags, startId);
+		Log.d(LOG_TAG, "START onStartCommand(Intent, int, int)");
 		
-		Log.d(LOG_TAG, "onStartCommand");
+		int result;
+		
+		String action = intent.getAction();
+		Bundle bundle = intent.getExtras();
+		
+		if(action.equals(OSGISERVICE_START)) {
+			Log.d(LOG_TAG, "proxy start for osgi service");
+			
+			BundleContext bundleContext = felix.getBundleContext();
+			
+			String bundleFile = bundle.getString(OSGISERVICE_BUNDLE_FILE);
+			
+			try {
+//				org.osgi.framework.Bundle osgiBundle = bundleContext.getBundle("file:" + bundleFile);
+//				osgiBundle = null;
+				org.osgi.framework.Bundle osgiBundle = bundleContext.installBundle("file:" + bundleFile);
+				
+				osgiBundle.start();
+				
+				String bundleName = bundle.getString(OSGISERVICE_BUNDLE_NAME);
+				ServiceTracker<?, ?> serviceTracker;
+				
+				if(serviceTrackerMap.containsKey(bundleName)) {
+					Log.d(LOG_TAG, "service tracker already registered");
+					serviceTracker = serviceTrackerMap.get(bundleName);
+				} else {
+					Log.d(LOG_TAG, "registering new service tracker");
+					serviceTracker = new ServiceTracker<>(getBundleContext(), bundleName, null);
+					serviceTracker.open();
+					serviceTrackerMap.put(bundleName, serviceTracker);
+				}
+				
+				Object serviceObject = serviceTracker.waitForService(10000);
+				Log.d(LOG_TAG, "service object is: " + serviceObject);
+				if(serviceObject != null) {
+					Log.d(LOG_TAG, "service object type is: " + serviceObject.getClass().getSimpleName());
+				}
+				
+				if(serviceObject == null) {
+					result = START_REDELIVER_INTENT;
+				} else {
+					result = START_STICKY_COMPATIBILITY; // TODO check for better options
+				}
+			} catch (InterruptedException | BundleException e) {
+				// original intent is rescheduled so service may be started later
+				result = START_REDELIVER_INTENT;
+			}
+		} else {
+			Log.d(LOG_TAG, "native start for android service");
+			
+			result = super.onStartCommand(intent, flags, startId);
+		}
+		
+		Log.d(LOG_TAG, "result is: " + result);
+		Log.d(LOG_TAG, "END onStartCommand(Intent, int, int)");
 		
 		return result;
 	}

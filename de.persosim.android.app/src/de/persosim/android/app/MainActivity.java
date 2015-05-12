@@ -4,6 +4,7 @@ import java.util.List;
 
 import de.persosim.android.app.DialogSelect.SelectDialogListener;
 import de.persosim.android.app.R;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -80,6 +81,7 @@ public class MainActivity extends FragmentActivity implements Constants, SelectD
 	}
 	
 	private void startLogging() {
+		final Activity thisActivity = this;
 		
 		new Thread(new Runnable() {
 	        public void run() {
@@ -93,6 +95,16 @@ public class MainActivity extends FragmentActivity implements Constants, SelectD
 	        	}
 	        	
 	        	Log.d(LOG_TAG, "OSGI service present is: " + osgiServiceObject);
+	        	
+	        	Log.d(LOG_TAG, "START TEST intent");
+	        	
+	        	Intent serviceIntent = new Intent(thisActivity, OsgiService.class);
+	        	serviceIntent.setAction(OsgiService.OSGISERVICE_START);
+	        	serviceIntent.putExtra(OsgiService.OSGISERVICE_BUNDLE_FILE, "/storage/emulated/0/Download/felixbase/bundles/ordered/de.persosim.android.logging.consolelogger.jar");
+	        	serviceIntent.putExtra(OsgiService.OSGISERVICE_BUNDLE_NAME, "de.persosim.android.logging.consolelogger.ConsoleLogger");
+	        	startService(serviceIntent);
+	        	
+	        	Log.d(LOG_TAG, "END TEST intent");
 	        	
 	        	while(true) {
 		            textOut.post(new Runnable() {
