@@ -295,35 +295,11 @@ public class OsgiService extends Service {
 		if(action.equals(OSGISERVICE_START)) {
 			Log.d(LOG_TAG, "proxy start for osgi service");
 			
-			BundleContext bundleContext = felix.getBundleContext();
-			
 			String bundleFile = bundle.getString(OSGISERVICE_BUNDLE_FILE);
+			String bundleName = bundle.getString(OSGISERVICE_BUNDLE_NAME);
 			
-			try {
-//				org.osgi.framework.Bundle osgiBundle = bundleContext.getBundle("file:" + bundleFile);
-//				osgiBundle = null;
-				org.osgi.framework.Bundle osgiBundle = bundleContext.installBundle("file:" + bundleFile);
-				
-				osgiBundle.start();
-				
-				String bundleName = bundle.getString(OSGISERVICE_BUNDLE_NAME);
-				ServiceTracker<?, ?> serviceTracker;
-				
-				if(serviceTrackerMap.containsKey(bundleName)) {
-					Log.d(LOG_TAG, "service tracker already registered");
-					serviceTracker = serviceTrackerMap.get(bundleName);
-				} else {
-					Log.d(LOG_TAG, "registering new service tracker");
-					serviceTracker = new ServiceTracker<>(getBundleContext(), bundleName, null);
-					serviceTracker.open();
-					serviceTrackerMap.put(bundleName, serviceTracker);
-				}
-				
-				Object serviceObject = serviceTracker.waitForService(10000);
-				Log.d(LOG_TAG, "service object is: " + serviceObject);
-				if(serviceObject != null) {
-					Log.d(LOG_TAG, "service object type is: " + serviceObject.getClass().getSimpleName());
-				}
+			try {				
+				Object serviceObject = getServiceObject(bundleName, bundleFile);
 				
 				if(serviceObject == null) {
 					result = START_REDELIVER_INTENT;
@@ -346,6 +322,34 @@ public class OsgiService extends Service {
 		return result;
 	}
 	
+	protected Object getServiceObject(String bundleName, String bundleFile) throws BundleException, InterruptedException {
+		BundleContext bundleContext = felix.getBundleContext();
+		
+		org.osgi.framework.Bundle osgiBundle = bundleContext.installBundle("file:" + bundleFile);
+		
+		osgiBundle.start();
+		
+		ServiceTracker<?, ?> serviceTracker;
+		
+		if(serviceTrackerMap.containsKey(bundleName)) {
+			Log.d(LOG_TAG, "service tracker already registered");
+			serviceTracker = serviceTrackerMap.get(bundleName);
+		} else {
+			Log.d(LOG_TAG, "registering new service tracker");
+			serviceTracker = new ServiceTracker<>(getBundleContext(), bundleName, null);
+			serviceTracker.open();
+			serviceTrackerMap.put(bundleName, serviceTracker);
+		}
+		
+		Object serviceObject = serviceTracker.waitForService(10000);
+		Log.d(LOG_TAG, "service object is: " + serviceObject);
+		if(serviceObject != null) {
+			Log.d(LOG_TAG, "service object type is: " + serviceObject.getClass().getSimpleName());
+		}
+		
+		return serviceObject;
+	}
+	
 	/**
 	 * This method returns the Felix BundleContext.
 	 * @return the Felix BundleContext
@@ -358,6 +362,19 @@ public class OsgiService extends Service {
 		OsgiService getService() {
 			Log.d(LOG_TAG, "OsgiBinder.getService()");
 			return OsgiService.this;
+		}
+	}
+	
+	public class ProxyBinder extends Binder {
+		private Object object;
+		
+		public ProxyBinder(Object binderObject) {
+			object = binderObject;
+		}
+		
+		Object getService() {
+			Log.d(LOG_TAG, "ProxyBinder.getService()");
+			return object;
 		}
 	}
 	
