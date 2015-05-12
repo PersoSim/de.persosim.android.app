@@ -44,7 +44,7 @@ public class HostActivator implements BundleActivator {
 	public String fileNameProfile09 = "Profile09.xml";
 	public String fileNameProfile10 = "Profile10.xml";
 	
-	public String[] startOrder = {fileNameLogging, fileNameAndroidLogger, fileNameCryptProv, fileNameSc, fileNameSimulator};
+	public String[] startOrder = {fileNameFelixLog, fileNameLogging, fileNameCryptProv, fileNameSc, fileNameSimulator};
 	
 	List<org.osgi.framework.Bundle> installedBundlesUnordered;
 	List<org.osgi.framework.Bundle> installedBundlesOrderedNonStart;
@@ -159,7 +159,7 @@ public class HostActivator implements BundleActivator {
 		Utils.preparePath(file);
 		
 		Log.d(LOG_TAG, "dumping bundles to disk");
-		Utils.writeRawResourceToFile(osgiService, R.raw.felixlog,         Constants.DIR_BUNDLE_UNORDERED_START_NAME, fileNameFelixLog);
+		Utils.writeRawResourceToFile(osgiService, R.raw.felixlog,         Constants.DIR_BUNDLE_ORDERED_START_NAME, fileNameFelixLog);
 		
 		Utils.writeRawResourceToFile(osgiService, R.raw.cryptoprovider,   Constants.DIR_BUNDLE_ORDERED_START_NAME, fileNameCryptProv);
 		Utils.writeRawResourceToFile(osgiService, R.raw.cryptoprovidersc, Constants.DIR_BUNDLE_ORDERED_START_NAME, fileNameSc);
