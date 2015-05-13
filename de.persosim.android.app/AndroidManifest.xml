@@ -48,7 +48,8 @@
                  android:exported="true"
                  android:permission="android.permission.WRITE_EXTERNAL_STORAGE" >
                  <intent-filter>
-          			<action android:name="de.persosim.android.techdemo.OsgiService" />
+          			<action android:name="de.persosim.android.app.OsgiService" />
+          			<action android:name="de.persosim.android.app.OsgiService.start" />
    				 </intent-filter>
         </service>
         
