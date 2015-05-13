@@ -3,8 +3,8 @@ package de.persosim.android.app;
 import java.util.List;
 
 import de.persosim.android.app.DialogSelect.SelectDialogListener;
+import de.persosim.android.app.OsgiService.ProxyBinder;
 import de.persosim.android.app.R;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -13,6 +13,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+//import android.os.Messenger;
 import android.view.KeyEvent;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -48,7 +49,11 @@ public class MainActivity extends FragmentActivity implements Constants, SelectD
 	
 	// object available when CardService.onCreate() has finished
     private OsgiService osgiServiceObject;
-    private ServiceConnection serviceConnection;
+    private Object loggingServiceObject;
+    private ServiceConnection osgiServiceConnection;
+    private ServiceConnection loggingServiceConnection;
+    
+//    private Messenger mService = null;
     
 	private BroadcastReceiver receiver = new BroadcastReceiver() {
 
@@ -81,7 +86,7 @@ public class MainActivity extends FragmentActivity implements Constants, SelectD
 	}
 	
 	private void startLogging() {
-		final Activity thisActivity = this;
+//		final Activity thisActivity = this;
 		
 		new Thread(new Runnable() {
 	        public void run() {
@@ -96,15 +101,28 @@ public class MainActivity extends FragmentActivity implements Constants, SelectD
 	        	
 	        	Log.d(LOG_TAG, "OSGI service present is: " + osgiServiceObject);
 	        	
-	        	Log.d(LOG_TAG, "START TEST intent");
+	        	bindLoggingService();
 	        	
-	        	Intent serviceIntent = new Intent(thisActivity, OsgiService.class);
-	        	serviceIntent.setAction(OsgiService.OSGISERVICE_START);
-	        	serviceIntent.putExtra(OsgiService.OSGISERVICE_BUNDLE_FILE, "/storage/emulated/0/Download/felixbase/bundles/ordered/de.persosim.android.logging.consolelogger.jar");
-	        	serviceIntent.putExtra(OsgiService.OSGISERVICE_BUNDLE_NAME, "de.persosim.android.logging.consolelogger.ConsoleLogger");
-	        	startService(serviceIntent);
-	        	
-	        	Log.d(LOG_TAG, "END TEST intent");
+//	        	Log.d(LOG_TAG, "START TEST intent");
+//	        	
+//	        	Intent serviceIntent = new Intent(thisActivity, OsgiService.class);
+//	        	serviceIntent.setAction(OsgiService.OSGISERVICE_START);
+//	        	serviceIntent.putExtra(OsgiService.OSGISERVICE_BUNDLE_FILE, "/storage/emulated/0/Download/felixbase/bundles/ordered/de.persosim.android.logging.consolelogger.jar");
+//	        	serviceIntent.putExtra(OsgiService.OSGISERVICE_BUNDLE_NAME, "de.persosim.android.logging.consolelogger.ConsoleLogger");
+//	        	startService(serviceIntent);
+//	        	
+//	        	boolean isBound;
+//	        	Intent serviceIntent = new Intent();
+//	        	serviceIntent.setAction(OsgiService.OSGISERVICE_BIND);
+//	        	serviceIntent.putExtra(OsgiService.OSGISERVICE_BUNDLE_FILE, "/storage/emulated/0/Download/felixbase/bundles/ordered/de.persosim.android.logging.consolelogger.jar");
+//	        	serviceIntent.putExtra(OsgiService.OSGISERVICE_BUNDLE_NAME, "de.persosim.android.logging.consolelogger.ConsoleLogger");
+//	        	
+//	        	isBound = bindService(serviceIntent, loggingServiceConnection, Context.BIND_AUTO_CREATE);
+//	        	Log.d(LOG_TAG, "service is bound: " + isBound);
+//	        	Log.d(LOG_TAG, "service object is: " + loggingServiceObject);
+//	        	
+//	        	
+//	        	Log.d(LOG_TAG, "END TEST intent");
 	        	
 	        	while(true) {
 		            textOut.post(new Runnable() {
@@ -238,7 +256,7 @@ public class MainActivity extends FragmentActivity implements Constants, SelectD
 		Intent intent = new Intent(this, CardService.class);
 		startService(intent);
 		
-		bindService();
+		bindOsgiService();
 		
 		startLogging();
 		
@@ -353,7 +371,7 @@ public class MainActivity extends FragmentActivity implements Constants, SelectD
 		Log.d(LOG_TAG, "START showConfigDialog()");
 		
 		FragmentManager fm = getSupportFragmentManager();
-        DialogConfig configDialog = new DialogConfig(this);
+        DialogConfig configDialog = new DialogConfig(this, loggingServiceObject);
         configDialog.show(fm, "fragment_config");
         
         Log.d(LOG_TAG, "END showConfigDialog()");
@@ -367,26 +385,30 @@ public class MainActivity extends FragmentActivity implements Constants, SelectD
 	/**
      * This method binds, i.e. starts, the OSGI service.
      */
-    private void bindService() {
-    	setServiceConnection();
+    private void bindOsgiService() {
+    	Log.d(LOG_TAG, "START bindOsgiService()");
+    	
+    	setOsgiServiceConnection();
     	
     	Intent intent = new Intent(this, OsgiService.class);
     	Log.d(LOG_TAG, "intent is: " + intent);
-    	Log.d(LOG_TAG, "connection is: " + serviceConnection);
+    	Log.d(LOG_TAG, "connection is: " + osgiServiceConnection);
     	
     	boolean isBound;
     	
-    	isBound = bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    	isBound = bindService(intent, osgiServiceConnection, Context.BIND_AUTO_CREATE);
     	Log.d(LOG_TAG, "service is bound: " + isBound);
         
         Log.d(LOG_TAG, "bound service is: " + osgiServiceObject);
+        
+        Log.d(LOG_TAG, "END bindOsgiService()");
     }
 	
 	/**
 	 * This method sets the service connection required to bind the OSGI service.
 	 */
-    private void setServiceConnection() {
-    	serviceConnection = new ServiceConnection() {	
+    private void setOsgiServiceConnection() {
+    	osgiServiceConnection = new ServiceConnection() {	
     		@Override
     		public void onServiceConnected(ComponentName className, IBinder binder) {
     			Log.d(LOG_TAG, "START onServiceConnected");
@@ -407,5 +429,75 @@ public class MainActivity extends FragmentActivity implements Constants, SelectD
     		}
     	};
     }
+    
+    private void bindLoggingService() {
+    	Log.d(LOG_TAG, "START bindLoggingService()");
+    	
+    	setLoggingServiceConnection();
+    	
+//    	Intent intent = new Intent(this, OsgiService.class);
+//    	Log.d(LOG_TAG, "intent is: " + intent);
+//    	Log.d(LOG_TAG, "connection is: " + osgiServiceConnection);
+//    	
+//    	boolean isBound;
+//    	
+//    	isBound = bindService(intent, loggingServiceConnection, Context.BIND_AUTO_CREATE);
+//    	Log.d(LOG_TAG, "service is bound: " + isBound);
+//        
+//        Log.d(LOG_TAG, "bound service is: " + osgiServiceObject);
+        
+        boolean isBound;
+    	Intent serviceIntent = new Intent(this, OsgiService.class);
+    	serviceIntent.setAction(OsgiService.OSGISERVICE_BIND);
+    	serviceIntent.putExtra(OsgiService.OSGISERVICE_BUNDLE_FILE, "/storage/emulated/0/Download/felixbase/bundles/ordered/de.persosim.android.logging.consolelogger.jar");
+    	serviceIntent.putExtra(OsgiService.OSGISERVICE_BUNDLE_NAME, "de.persosim.android.logging.consolelogger.ConsoleLogger");
+    	
+    	isBound = bindService(serviceIntent, loggingServiceConnection, Context.BIND_AUTO_CREATE);
+    	Log.d(LOG_TAG, "service is bound: " + isBound);
+    	Log.d(LOG_TAG, "service object is: " + loggingServiceObject);
+        
+        Log.d(LOG_TAG, "END bindLoggingService()");
+    }
+    
+    private void setLoggingServiceConnection() {
+    	loggingServiceConnection = new ServiceConnection() {	
+    		@Override
+    		public void onServiceConnected(ComponentName className, IBinder binder) {
+    			Log.d(LOG_TAG, "START onServiceConnected");
+    			
+    			Log.d(LOG_TAG, "binder is: " + binder);
+    			Log.d(LOG_TAG, "binder is of type: " + binder.getClass().getCanonicalName());
+    			ProxyBinder proxybinder = (ProxyBinder) binder;
+    			loggingServiceObject = proxybinder.getService();
+    			Log.d(LOG_TAG, "logging service object is: " + loggingServiceObject);
+    			
+    			Log.d(LOG_TAG, "END onServiceConnected");
+    		}
+    		
+    		@Override
+    		public void onServiceDisconnected(ComponentName className) {
+    			Log.d(LOG_TAG, "START onServiceDisConnected");
+    			
+//    			mService = null;
+    			
+    			Log.d(LOG_TAG, "END onServiceDisConnected");
+    		}
+    	};
+    }
+    
+//    class IncomingHandler extends Handler {
+//        @Override
+//        public void handleMessage(Message msg) {
+//            switch (msg.what) {
+//                case MessengerService.MSG_SET_VALUE:
+//                    // do something
+//                    break;
+//                default:
+//                    super.handleMessage(msg);
+//            }
+//        }
+//    }
+//    
+//    final Messenger mMessenger = new Messenger(new IncomingHandler());
 	
 }

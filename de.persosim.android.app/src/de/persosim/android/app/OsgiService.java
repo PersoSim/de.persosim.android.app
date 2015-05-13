@@ -34,6 +34,7 @@ public class OsgiService extends Service {
 	public static final String OSGISERVICE_START = LOG_TAG + ".start";
 	public static final String OSGISERVICE_BUNDLE_NAME = LOG_TAG + ".bundlename";
 	public static final String OSGISERVICE_BUNDLE_FILE = LOG_TAG + ".bundlefile";
+	public static final String OSGISERVICE_BIND = LOG_TAG + ".bind";
 	
 	private String defaultAppDir = null;
 	private String defaultFelixDir = null;
@@ -55,9 +56,37 @@ public class OsgiService extends Service {
 	public IBinder onBind(Intent intent) {
 		Log.d(LOG_TAG, "START onBind(Intent)");
 		
+		IBinder binder;
+		
+		String action = intent.getAction();
+		Bundle bundle = intent.getExtras();
+		
+		if((action != null) || (bundle != null)) {
+			Log.d(LOG_TAG, "proxy bind for osgi service");
+			
+			String bundleFile = bundle.getString(OSGISERVICE_BUNDLE_FILE);
+			String bundleName = bundle.getString(OSGISERVICE_BUNDLE_NAME);
+			
+			try {				
+				Object serviceObject = getServiceObject(bundleName, bundleFile);
+				
+				if(serviceObject == null) {
+					binder = null;
+				} else {
+					binder = new ProxyBinder(serviceObject);
+				}
+			} catch (InterruptedException | BundleException e) {
+				binder = null;
+			}
+		} else {
+			Log.d(LOG_TAG, "native start for android service");
+			
+			binder = osgiBinder;
+		}
+		
 		Log.d(LOG_TAG, "END onBind(Intent)");
 		
-		return osgiBinder;
+		return binder;
 	}
 	
 	@Override
