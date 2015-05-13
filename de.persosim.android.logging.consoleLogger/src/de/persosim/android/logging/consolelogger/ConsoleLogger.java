@@ -47,11 +47,6 @@ public class ConsoleLogger extends AbstractLogListener implements Configuration 
 		this.bundleContext = bundleContext;
 	}
 	
-//	@Override
-//	public void logged(LogEntry entry) {
-//		
-//	}
-	
 	/**
 	 * This method returns the OSGI wrapper service currently registered in the bundle registry.
 	 * @return the OSGI wrapper service currently registered in the bundle registry, otherwise null
@@ -123,8 +118,14 @@ public class ConsoleLogger extends AbstractLogListener implements Configuration 
 	}
 	
 	public void setLogLevel(byte logLevel) {
+		Log.d(LOG_TAG, "START setLogLevel(byte)");
+		
+		Log.d(LOG_TAG, "set log level to: " + logLevel);
+		
 		LogListenerConfig lrc = makeConfig(logLevel);
 		setLrc(lrc);
+		
+		Log.d(LOG_TAG, "END setLogLevel(byte)");
 	}
 	
 	private static byte[] getLogLevels(byte logLevel) {
