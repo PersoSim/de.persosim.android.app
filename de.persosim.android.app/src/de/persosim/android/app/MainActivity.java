@@ -35,6 +35,10 @@ import android.widget.TextView.OnEditorActionListener;
 
 /**
  * This class provides the main GUI for the PersoSim app.
+ * 
+ * If you encounter a problem or need help building this app please have a look
+ * at the README.md to be found in the root folder of the repository.
+ * 
  * @author slutters
  * 
  */
