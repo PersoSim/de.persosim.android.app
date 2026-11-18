@@ -1,0 +1,52 @@
+name: Build Android APK
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+      - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
+        with:
+          packages: 'platform-tools platforms;android-36 build-tools;35.0.0'
+      - name: Check profile editor and import
+        run: |
+          uv run --no-project python de.persosim.android.app/tools/check_editor.py
+          uv run --no-project python de.persosim.android.app/tools/check_import.py
+      - name: Build and test from source
+        run: ./gradlew --no-daemon :simulator:test :app:lintRelease :app:assembleRelease
+      - name: Verify APK contents
+        run: uv run --no-project python de.persosim.android.app/tools/check_apk.py de.persosim.android.app/build/outputs/apk/release/app-release.apk
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: PersoSim-0.18
+          path: de.persosim.android.app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+          retention-days: 30
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: verification-reports
+          path: |
+            simulator/build/reports/tests/test/
+            de.persosim.android.app/build/reports/lint-results-release.*
+          if-no-files-found: ignore

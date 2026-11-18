@@ -1,58 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="de.persosim.android.app"
-    android:versionCode="1"
-    android:versionName="0.5.0" >
-
-    <uses-sdk
-        android:minSdkVersion="19"
-        android:targetSdkVersion="21" />
-    <!-- Card emulation was introduced in API 19. -->
-    <uses-feature android:name="android.hardware.nfc.hce" android:required="true" />
+<?xml version='1.0' encoding='utf-8'?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-feature android:name="android.hardware.nfc.hce" android:required="false" />
     <uses-permission android:name="android.permission.NFC" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-    <application
-        android:allowBackup="true"
-        android:icon="@drawable/persosim"
-        android:label="@string/app_name"
-        >
-        <activity
-            android:name="de.persosim.android.app.MainActivity"
-            android:label="@string/app_name"
-            android:windowSoftInputMode="stateHidden" >
+    <application android:allowBackup="false" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:label="@string/app_name" android:supportsRtl="true" android:theme="@style/AppTheme">
+        <activity android:exported="true" android:name="de.persosim.android.app.MainActivity" android:theme="@android:style/Theme.Material.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <!-- Service for handling communication with NFC terminal. -->
-        <service android:name="de.persosim.android.app.CardService"
-                 android:exported="true"
-                 android:permission="android.permission.BIND_NFC_SERVICE"
-            >
-            <!-- Intent filter indicating that we support card emulation. -->
+        <activity android:exported="false" android:name="de.persosim.android.app.SettingsActivity" android:parentActivityName="de.persosim.android.app.MainActivity" android:windowSoftInputMode="stateHidden" />
+        <service android:exported="false" android:name="de.persosim.android.simulator.PersoSimService" />
+        <service android:exported="true" android:name="de.persosim.android.hce.CardService" android:permission="android.permission.BIND_NFC_SERVICE">
             <intent-filter>
-                <action android:name="android.nfc.cardemulation.action.HOST_APDU_SERVICE"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="android.nfc.cardemulation.action.HOST_APDU_SERVICE" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            <!-- Required XML configuration file, listing the AIDs that we are emulating cards
-                 for. This defines what protocols our card emulation service supports. -->
-            <meta-data android:name="android.nfc.cardemulation.host_apdu_service"
-                       android:resource="@xml/aid_list"/>
+            <meta-data android:name="android.nfc.cardemulation.host_apdu_service" android:resource="@xml/aid_list" />
         </service>
-        
-         <service android:name="de.persosim.android.app.OsgiService"
-                 android:exported="true"
-                 android:permission="android.permission.WRITE_EXTERNAL_STORAGE" >
-                 <intent-filter>
-          			<action android:name="de.persosim.android.app.OsgiService" />
-          			<action android:name="de.persosim.android.app.OsgiService.start" />
-   				 </intent-filter>
-        </service>
-        
+        <service android:exported="false" android:name="de.persosim.android.remoteifd.RemoteIfdService" />
+        <activity android:exported="false" android:excludeFromRecents="true" android:name="de.persosim.android.reader.ReaderUiActivity" android:taskAffinity="" android:windowSoftInputMode="stateVisible" />
+        <activity android:name="de.persosim.android.app.ProfileEditorActivity" android:exported="false" android:theme="@android:style/Theme.Material.Light.NoActionBar" />
     </application>
-
 </manifest>

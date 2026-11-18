@@ -1,0 +1,50 @@
+[
+  {
+    "module": "de.persosim.simulator",
+    "repository": "https://github.com/PersoSim/de.persosim.simulator",
+    "commit": "ab960506a76304c3f9bb9ec3dc7969900e5ec11e",
+    "sourcePath": "de.persosim.simulator/src"
+  },
+  {
+    "module": "org.globaltester.logging",
+    "repository": "https://github.com/PersoSim/org.globaltester.logging",
+    "commit": "44131edf05dc10d2322dc93e249da28b7c5416b9",
+    "sourcePath": "org.globaltester.logging/src"
+  },
+  {
+    "module": "org.globaltester.cryptoprovider",
+    "repository": "https://github.com/PersoSim/org.globaltester.cryptoprovider",
+    "commit": "7cbf4f47f180f8d536af7a4e1433773e0f3ee1a6",
+    "sourcePath": "org.globaltester.cryptoprovider/src"
+  },
+  {
+    "module": "org.globaltester.cryptoprovider.sc",
+    "repository": "https://github.com/PersoSim/org.globaltester.cryptoprovider",
+    "commit": "7cbf4f47f180f8d536af7a4e1433773e0f3ee1a6",
+    "sourcePath": "org.globaltester.cryptoprovider.sc/src"
+  },
+  {
+    "module": "org.globaltester.simulator",
+    "repository": "https://github.com/PersoSim/org.globaltester.simulator",
+    "commit": "2210760101d33db9a56b5f9b60f2367bf4cf6457",
+    "sourcePath": "org.globaltester.simulator/src"
+  },
+  {
+    "module": "org.globaltester.lib.xstream",
+    "repository": "https://github.com/PersoSim/org.globaltester.lib.xstream",
+    "commit": "7374b7a6e71b72549f577c9224740b0ce438c4ba",
+    "sourcePath": "org.globaltester.lib.xstream/src"
+  },
+  {
+    "module": "de.persosim.driver.connector",
+    "repository": "https://github.com/PersoSim/de.persosim.driver.connector",
+    "commit": "03c485d87a00200dddf016dc28258a06028d4d09",
+    "sourcePath": "de.persosim.driver.connector/src"
+  },
+  {
+    "module": "de.persosim.remoteifd",
+    "repository": "https://github.com/PersoSim/de.persosim.remoteifd",
+    "commit": "c67d6f43ffded7627c1d6007a367cd891b73b260",
+    "sourcePath": "de.persosim.remoteifd/src"
+  }
+]

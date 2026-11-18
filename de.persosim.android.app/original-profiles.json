@@ -1,0 +1,23 @@
+{
+  "source": "PersoSim Android 0.17.2 original APK",
+  "apkSha256": "830f728ffb62f8ea08b6e5db9d1c1a179012b83839dc982a765b633bdc024837",
+  "files": {
+    "DefaultPersoGt.perso": "7b0056846097b0a5d82536f775f2363a390178a9bcc031af3f967e93f2c573d6",
+    "Profile01.perso": "8476aa6f2daaa392e784cf6880eb175b4d8240e2dbf1a0ce29faefa18c8d1a5e",
+    "Profile02.perso": "06bc18c554180eaada1edfb702dd812e16a20d4ded92fe78a25167d39e3d6b5e",
+    "Profile03.perso": "62ef4f07e19c4b557367711ab28449bba24b48cabbf7043dc883f47ae878f656",
+    "Profile04.perso": "6ae9a549a47a4d1feb5a8b2d9dfeb138449773d08b7b3342b1c474f311596acd",
+    "Profile05.perso": "fb57cb41edb46c1eedb4f7adbaa1f6f8dcfad78536215b1ffe6b15bdb6990e5f",
+    "Profile06.perso": "2148a7965f3c4f9b93bb1019897d4695221c0b94cae66fda11437eb21d63b00f",
+    "Profile07.perso": "5281faf2dd3344fc40f3e2bb799ee3496e185cddda1f524066252605f79ae0f1",
+    "Profile08.perso": "d35e1446d417e081f912ee91636eb427e60f9a069ddc60433611863d3de52a3d",
+    "Profile09.perso": "eb0eee84aef763719c3825f0c0b4d2de5c701fddf2e3c1fb53917e868e704774",
+    "Profile10.perso": "2871cc8256ffe697167f997d8e4c3460208dd1dc352b795e57f45432c7f218c1",
+    "Profile11.perso": "e57c9e11eeaf8ee07ec41b5bd1afc63d19290b9792e62663333abbcdc51ff5bd",
+    "ProfileUB01.perso": "19cfb4da98c978e2149b7c44d19ebcd1105758ae1f8c73d18569c99611be1ea9",
+    "ProfileUB02.perso": "e7d4fc4a691e400b60f4eb277127f0bf7b680d05b895167f173912f8bdd7e753",
+    "ProfileUB03.perso": "4c853c9c6e43b66a6df6b33cf6d6767d0b093b9d7d6a95843dc557dcd2296220",
+    "ProfileUB04.perso": "ad28abd1ffa3ade7063ccbb85d5b9b2f368b5e863f6b211fa8456266a81d1851",
+    "ProfileUB05.perso": "6c838dcade6d902fe42d60123c37e4ec438cfacbcbd189b98f544d038fe45904"
+  }
+}

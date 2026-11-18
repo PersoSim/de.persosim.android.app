@@ -1,0 +1,45 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'de.persosim.android.app'
+    compileSdk 36
+    useLibrary 'android.test.runner'
+    useLibrary 'android.test.base'
+    testBuildType 'release'
+    defaultConfig {
+        applicationId 'de.persosim.android.app'
+        minSdk 21
+        targetSdk 26
+        versionCode 28
+        versionName '0.18'
+        testInstrumentationRunner 'android.test.InstrumentationTestRunner'
+    }
+    buildTypes {
+        release { signingConfig signingConfigs.debug }
+    }
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = [layout.buildDirectory.dir('generated/profileAssets')]
+        }
+        androidTest.java.srcDirs = ['androidTest']
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
+    }
+    packaging.resources.excludes += ['META-INF/DEPENDENCIES', 'META-INF/LICENSE*', 'META-INF/NOTICE*', 'META-INF/versions/**', 'OSGI-INF/**']
+    lint { disable 'ExpiredTargetSdkVersion', 'GradleDependency' }
+}
+dependencies {
+    implementation project(':simulator')
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+}
+tasks.register('generateProfileAssets', Exec) {
+    inputs.files(fileTree('profiles'), file('original-profiles.json'), file('tools/profile_assets.py'))
+    outputs.dir(layout.buildDirectory.dir('generated/profileAssets'))
+    commandLine 'uv', 'run', '--no-project', 'python', 'tools/profile_assets.py', '--output', layout.buildDirectory.dir('generated/profileAssets').get().asFile
+}
+tasks.named('preBuild').configure { dependsOn 'generateProfileAssets' }

@@ -1,0 +1,27 @@
+plugins { id 'java-library' }
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+sourceSets.main.java {
+    srcDirs = rootProject.file('third_party').listFiles().findAll { it.isDirectory() }.collect { new File(it, 'src') }
+    exclude '**/EclipsePreferenceAccessor.java'
+    exclude '**/AbstractSimulatorGtService.java', '**/device/**'
+    exclude 'de/persosim/driver/connector/Activator.java'
+    exclude '**/SimulatorPersoSimDriverConnector.java'
+    exclude 'org/globaltester/cryptoprovider/sc/Activator.java'
+}
+dependencies {
+    api 'com.thoughtworks.xstream:xstream:1.4.21'
+    api 'com.madgag.spongycastle:prov:1.58.0.0'
+    api 'org.bouncycastle:bctls-jdk18on:1.87'
+    api 'org.bouncycastle:bcpkix-jdk18on:1.87'
+    implementation 'org.osgi:org.osgi.core:6.0.0'
+    compileOnly 'org.json:json:20210307'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.json:json:20210307'
+}
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+test {
+    systemProperty 'profilesDir', rootProject.file('de.persosim.android.app/profiles').absolutePath
+}
